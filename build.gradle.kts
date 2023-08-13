@@ -38,10 +38,16 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_ktor")
     // SLF4J Logger
     implementation("io.insert-koin:koin-logger-slf4j:$koin_ktor")
+    implementation("io.insert-koin:koin-test:$koin_ktor")
+
 
     // Default Headers
     implementation("io.ktor:ktor-server-default-headers:$ktor_version")
 
     // Status Pages
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+
+    // Test
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
 }
