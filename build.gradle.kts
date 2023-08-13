@@ -41,4 +41,7 @@ dependencies {
 
     // Default Headers
     implementation("io.ktor:ktor-server-default-headers:$ktor_version")
+
+    // Status Pages
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
 }
