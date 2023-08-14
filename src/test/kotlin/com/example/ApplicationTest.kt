@@ -6,7 +6,6 @@ import com.example.plugins.*
 import com.example.repository.HeroRepositoryImpl
 import com.example.repository.NEXT_PAGE_KEY
 import com.example.repository.PREVIOUS_PAGE_KEY
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -114,6 +113,53 @@ class ApplicationTest : KoinTest {
         }
     }
 
+    @Test
+    fun `access search heroes endpoint, query hero name, assert single hero result` () = testApplication {
+        client.get("/boruto/heroes/search?name=sasu").apply {
+            assertEquals(expected = HttpStatusCode.OK, actual = status)
+
+            val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText()).result.size
+            assertEquals(expected = 1, actual = actualResponse)
+        }
+    }
+
+    @Test
+    fun `access search heroes endpoint, query hero name, assert multiple heroes result` () = testApplication {
+        client.get("/boruto/heroes/search?name=sa").apply {
+            assertEquals(expected = HttpStatusCode.OK, actual = status)
+
+            val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText()).result.size
+            assertEquals(expected = 3, actual = actualResponse)
+        }
+    }
+
+    @Test
+    fun `access search heroes endpoint, query an empty text, assert empty list as result` () = testApplication {
+        client.get("/boruto/heroes/search?name=").apply {
+            assertEquals(expected = HttpStatusCode.OK, actual = status)
+
+            val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText()).result
+            assertEquals(expected = emptyList(), actual = actualResponse)
+        }
+    }
+
+    @Test
+    fun `access search heroes endpoint, query non existing hero, assert empty list as result` () = testApplication {
+        client.get("/boruto/heroes/search?name=unknown").apply {
+            assertEquals(expected = HttpStatusCode.OK, actual = status)
+
+            val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText()).result
+            assertEquals(expected = emptyList(), actual = actualResponse)
+        }
+    }
+
+    @Test
+    fun `access non existing endpoint, assert not found` () = testApplication {
+        client.get("/unknown").apply {
+            assertEquals(expected = HttpStatusCode.NotFound, actual = status)
+            assertEquals(expected = "Page not found.", actual = bodyAsText())
+        }
+    }
 
     private fun calculatePage(page: Int): Map<String, Int?> {
         var previousPage: Int? = page
