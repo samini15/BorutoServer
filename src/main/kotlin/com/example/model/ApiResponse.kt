@@ -8,5 +8,6 @@ data class ApiResponse<Data>(
     val message: String? = null,
     val previousPage: Int? = null,
     val nextPage: Int? = null,
+    val lastUpdated: Long? = null,
     val result: List<Data> = emptyList()
 )
