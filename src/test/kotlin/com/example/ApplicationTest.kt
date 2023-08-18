@@ -43,15 +43,16 @@ class ApplicationTest : KoinTest {
         client.get("/boruto/heroes").apply {
             assertEquals(expected = HttpStatusCode.OK, actual = status)
 
+            val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText())
             val expectedResponse = ApiResponse<Hero>(
                 success = true,
                 message = "Ok",
                 previousPage = null,
                 nextPage = 2,
+                lastUpdated = actualResponse.lastUpdated,
                 result = repository.page1
             )
 
-            val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText())
             assertEquals(expected = expectedResponse, actual = actualResponse)
         }
     }
@@ -76,15 +77,15 @@ class ApplicationTest : KoinTest {
                 client.get("/boruto/heroes?page=$page").apply {
                     assertEquals(expected = HttpStatusCode.OK, actual = status)
 
+                    val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText())
                     val expectedResponse = ApiResponse(
                         success = true,
                         message = "Ok",
                         previousPage = calculatePage(page = page)[PREVIOUS_PAGE_KEY],
                         nextPage = calculatePage(page = page)[NEXT_PAGE_KEY],
+                        lastUpdated = actualResponse.lastUpdated,
                         result = heroes[page - 1]
                     )
-
-                    val actualResponse = Json.decodeFromString<ApiResponse<Hero>>(bodyAsText())
                     assertEquals(expected = expectedResponse, actual = actualResponse)
                 }
             }
